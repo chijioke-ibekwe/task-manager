@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Auth\src\Users\src\Enums\TaskStatus;
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +12,8 @@ class Task extends Model
     use HasFactory, HasUuids;
 
     protected $table = 'tasks';
+
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.

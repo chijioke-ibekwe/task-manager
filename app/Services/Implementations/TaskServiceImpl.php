@@ -2,7 +2,7 @@
 
 namespace App\Services\Implementations;
 
-use App\Auth\src\Users\src\Enums\TaskStatus;
+use App\Enums\TaskStatus;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
@@ -24,7 +24,7 @@ class TaskServiceImpl implements TaskService
     public function fetchMyTasks(): LengthAwarePaginator
     {
         return QueryBuilder::for(get_class($this->task))
-            ->latest()
+            ->oldest('due_date')
             ->allowedFilters([
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('due_date')
