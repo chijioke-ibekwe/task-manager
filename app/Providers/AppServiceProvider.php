@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Services\AuthService;
 use App\Services\Implementations\AuthServiceImpl;
+use App\Services\Implementations\TaskServiceImpl;
+use App\Services\TaskService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthService::class, AuthServiceImpl::class);
+        $this->app->bind(TaskService::class, TaskServiceImpl::class);
     }
 
     /**
