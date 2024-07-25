@@ -41,7 +41,7 @@ class TaskController extends Controller
 
             return $this->response(null, $response);
         } catch (ModelNotFoundException $e) {
-            return $this->response('Task not found', 404);
+            return $this->response('Task not found', code: 404);
         }
     }
 
@@ -69,7 +69,7 @@ class TaskController extends Controller
 
             return $this->response('Task updated successfully', $response);
         } catch (ModelNotFoundException $e) {
-            return $this->response('Task not found', 404);
+            return $this->response('Task not found', code: 404);
         }
     }
 
@@ -85,7 +85,7 @@ class TaskController extends Controller
 
             return $this->response('Task completed successfully', $response);
         } catch (ModelNotFoundException $e) {
-            return $this->response('Task not found', 404);
+            return $this->response('Task not found', code: 404);
         }
     }
 
@@ -101,7 +101,7 @@ class TaskController extends Controller
 
             return $this->response('Task deleted successfully');
         } catch (ModelNotFoundException $e) {
-            return $this->response('Task not found', 404);
+            return $this->response('Task not found', code: 404);
         }
     }
 }
