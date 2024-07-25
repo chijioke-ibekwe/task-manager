@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
-use App\Models\User;
 
 interface AuthService
 {
