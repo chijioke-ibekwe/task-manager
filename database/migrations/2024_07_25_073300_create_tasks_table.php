@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->date('due_date');
             $table->uuid('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamps();
         });
     }
 

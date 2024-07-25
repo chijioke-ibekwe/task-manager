@@ -17,7 +17,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{taskId}', [TaskController::class, 'show']);
         Route::post('/', [TaskController::class, 'store']);
         Route::put('/{taskId}', [TaskController::class, 'update']);
-        Route::patch('/{taskId}/mark-as-completed', [TaskController::class, 'markAsCompleted']);
+        Route::patch('/{taskId}/complete', [TaskController::class, 'complete']);
         Route::delete('/{taskId}', [TaskController::class, 'destroy']);
     });
 });
