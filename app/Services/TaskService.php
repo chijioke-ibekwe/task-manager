@@ -15,5 +15,7 @@ interface TaskService
 
     public function updateMyTask(UpdateTaskRequest $request, string $taskId);
 
+    public function markTaskAsCompleted(string $taskId);
+
     public function deleteMyTask(string $taskId);
 }

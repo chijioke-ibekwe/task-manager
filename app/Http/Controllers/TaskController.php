@@ -74,6 +74,22 @@ class TaskController extends Controller
     }
 
     /**
+     * Mark a task belonging to me as completed.
+     *
+     * @return JsonResponse
+     */
+    public function markAsCompleted(string $taskId): JsonResponse
+    {
+        try {
+            $response = $this->taskService->markAsCompleted($taskId);
+
+            return $this->response('Task completed successfully', $response);
+        } catch (ModelNotFoundException $e) {
+            return $this->response('Task not found', 404);
+        }
+    }
+
+    /**
      * Delete a task belonging to me.
      *
      * @return JsonResponse
