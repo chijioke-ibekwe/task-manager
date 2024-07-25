@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+    task_manager:
+        container_name: task_manager
+        build:
+            context: .
+            target: php
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        ports:
+            - "8000:8000"
+        networks:
+            - network
+        depends_on:
+            - postgres
+
+    postgres:
+        container_name: postgres
+        image: postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: task_manager
+            PGDATA: /data/postgres
+        volumes:
+            - postgres:/data/postgres
+        ports:
+            - "5433:5432"
+        networks:
+            - network
+
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            PGADMIN_CONFIG_SERVER_MODE: 'False'
+            PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+        volumes:
+            - pgadmin:/var/lib/pgadmin
+            - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+            - ./docker/pgadmin/pgpass:/pgpass
+        ports:
+            - "5051:80"
+        networks:
+            - network
+
+networks:
+    network:
+        driver: bridge
+
+volumes:
+    postgres:
+    pgadmin:
+    task_manager:
