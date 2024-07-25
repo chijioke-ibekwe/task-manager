@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ResponseStatus;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -25,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => 'Resource route not found',
                 'data' => null
             ], 404);
@@ -35,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             $errors = $e->validator->errors()->all();
 
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => $errors[0],
                 'data' => $errors
             ], 400);
@@ -44,7 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => 'Method not allowed',
                 'data' => null
             ], 405);
@@ -52,7 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => 'You are not authenticated',
                 'data' => null
             ], 401);
@@ -60,7 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AuthorizationException $e, Request $request) {
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => 'You do not have permission to perform this action',
                 'data' => null
             ], 403);
@@ -68,7 +69,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (ModelNotFoundException $e, Request $request) {
             return response()->json([
-                'status' => 'failure',
+                'status' => ResponseStatus::FAILURE,
                 'message' => 'Model not found',
                 'data' => null
             ], 404);
