@@ -14,6 +14,7 @@ it('fetches all tasks belonging to a user', function () {
     Task::factory()->count(5)->create([
         'user_id' => $user_one->id
     ]);
+    
     Task::factory()->count(3)->create([
         'user_id' => $user_two->id
     ]);
@@ -40,205 +41,147 @@ it('fetches a single task belonging to user', function () {
         ->assertOk()
         ->assertJsonFragment([
             'description' => 'Go to the gym',
-            'due_date' => Carbon::parse('2024-12-09'),
-            'status' => TaskStatus::INCOMPLETE,
+            'due_date' => '2024-12-09',
+            'status' => 'incomplete',
             'user_id' => $user->id
         ]);
 });
 
-// it('throws a 404 when attempting to fetch a task belonging to another user', function () {
-//     $tenant_one = Tenant::factory()->create();
-//     $tenant_two = Tenant::factory()->create();
+it('throws a 404 when attempting to fetch a task belonging to another user', function () {
+    $user_one = User::factory()->create();
+    $user_two = User::factory()->create();
 
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant_two
-//     ]);
+    Task::factory()->create([
+        'description' => 'Go to the gym',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::INCOMPLETE,
+        'user_id' => $user_one->id
+    ]);
 
-//     $product = Product::factory()->createOneQuietly([
-//         'product_name' => 'Bags of Rice',
-//         'price' => 40000,
-//         'currency' => 'NGN',
-//         'description' => 'Quality bags of rice manufactured by caprice',
-//         'stock_quantity' => 1000,
-//         'maximum_lead_time' => 7,
-//         'minimum_lead_time' => 14,
-//         'payment_terms' => 30,
-//         'status' => Unpublished::class,
-//         'tenant_id' => $tenant_one->id
-//     ]);
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::INCOMPLETE,
+        'user_id' => $user_two->id
+    ]);
 
-//     $this->actingAs($user)->get("api/v1/products/$product->id")
-//         ->assertStatus(404);
-// });
+    $this->actingAs($user_one)->get("api/tasks/$task->id")
+        ->assertStatus(404)
+        ->assertJsonFragment([
+            'message' => 'Task not found'
+        ]);        
+});
 
-// it('creates a supplier product', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
+it('creates a task', function () {
+    $user = User::factory()->create();
 
-//     $image = UploadedFile::fake()->image('image.jpg');
+    $this->actingAs($user)->post('/api/tasks', [
+        'description' => 'Do my Laundry',
+        'due_date' => '2024-12-09'
+    ])
+        ->assertStatus(201)
+        ->assertJsonFragment([
+            'description' => 'Do my Laundry',
+            'due_date' => '2024-12-09',
+            'status' => 'incomplete',
+            'user_id' => $user->id
+        ]);
+});
 
-//     $this->actingAs($user)->post('/api/v1/products', [
-//         'product_name' => 'Bags of Rice',
-//         'price' => 40000,
-//         'currency' => 'NGN',
-//         'description' => 'Quality bags of rice manufactured by caprice',
-//         'stock_quantity' => 1000,
-//         'maximum_lead_time' => 7,
-//         'minimum_lead_time' => 14,
-//         'payment_terms' => 30,
-//         'image' => $image
-//     ])
-//         ->assertOk()
-//         ->assertJsonFragment([
-//             'product_name' => 'Bags of Rice',
-//             'price' => 40000,
-//             'currency' => 'NGN',
-//             'description' => 'Quality bags of rice manufactured by caprice',
-//             'stock_quantity' => 1000,
-//             'maximum_lead_time' => 7,
-//             'minimum_lead_time' => 14,
-//             'payment_terms' => 30,
-//             'status' => Unpublished::class,
-//             'tenant_id' => $tenant->id
-//         ])
-//         ->assertJsonPath('data.documents.product_image.0.file_name', 'image.jpg');
-// });
+it('updates a task belonging to a user', function () {
+    $user = User::factory()->create();
 
-// it('updates a supplier product', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::INCOMPLETE,
+        'user_id' => $user->id
+    ]);
 
-//     $product = Product::factory()->createOneQuietly([
-//         'product_name' => 'Bags of Rice',
-//         'price' => 40000,
-//         'currency' => 'NGN',
-//         'description' => 'Quality bags of rice manufactured by caprice',
-//         'stock_quantity' => 1000,
-//         'maximum_lead_time' => 7,
-//         'minimum_lead_time' => 14,
-//         'payment_terms' => 30,
-//         'status' => Published::class,
-//         'tenant_id' => $tenant->id
-//     ]);
+    $this->actingAs($user)->put("/api/tasks/$task->id", [
+        'description' => 'Do my Laundry',
+        'due_date' => '2024-12-15'
+    ])
+        ->assertOk()
+        ->assertJsonFragment([
+            'description' => 'Do my Laundry',
+            'due_date' => '2024-12-15',
+            'status' => 'incomplete',
+            'user_id' => $user->id
+        ]);
+});
 
-//     $image = UploadedFile::fake()->image('image_two.jpg');
+it('throws a 422 exception when updating a task without the description parameter on the request body', function () {
+    $user = User::factory()->create();
 
-//     $this->actingAs($user)->patch("/api/v1/products/$product->id", [
-//         'product_name' => 'Bags of Foreign Rice',
-//         'price' => 10000,
-//         'currency' => 'GHS',
-//         'image' => $image
-//     ])
-//         ->assertOk()
-//         ->assertJsonFragment([
-//             'product_name' => 'Bags of Foreign Rice',
-//             'price' => 10000,
-//             'currency' => 'GHS',
-//             'description' => 'Quality bags of rice manufactured by caprice',
-//             'stock_quantity' => 1000,
-//             'maximum_lead_time' => 7,
-//             'minimum_lead_time' => 14,
-//             'payment_terms' => 30,
-//             'status' => UnderReview::class,
-//             'tenant_id' => $tenant->id
-//         ])
-//         ->assertJsonPath('data.documents.product_image.0.file_name', 'image_two.jpg');
-// });
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::INCOMPLETE,
+        'user_id' => $user->id
+    ]);
 
-// it('updates the status of a supplier product', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
+    $this->actingAs($user)->put("/api/tasks/$task->id", [
+        'due_date' => '2024-12-15'
+    ])
+        ->assertStatus(422)
+        ->assertJsonFragment([
+            'message' => 'The description field is required.'
+        ]);
+});
 
-//     $product = Product::factory()->createOneQuietly([
-//         'product_name' => 'Bags of Rice',
-//         'price' => 40000,
-//         'currency' => 'NGN',
-//         'description' => 'Quality bags of rice manufactured by caprice',
-//         'stock_quantity' => 1000,
-//         'maximum_lead_time' => 7,
-//         'minimum_lead_time' => 14,
-//         'payment_terms' => 30,
-//         'status' => Unpublished::class,
-//         'tenant_id' => $tenant->id
-//     ]);
+it('marks the status of a task as complete', function () {
+    $user = User::factory()->create();
 
-//     $image = UploadedFile::fake()->image('image_two.jpg');
-//     $product->addMedia($image)->toMediaCollection(ProductEnum::PRODUCT_IMAGE->value);
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::INCOMPLETE,
+        'user_id' => $user->id
+    ]);
 
-//     $this->actingAs($user)->patch("/api/v1/products/$product->id/status", [
-//         'status' => 'under_review'
-//     ])
-//         ->assertOk()
-//         ->assertJsonFragment([
-//             'product_name' => 'Bags of Rice',
-//             'price' => 40000,
-//             'currency' => 'NGN',
-//             'description' => 'Quality bags of rice manufactured by caprice',
-//             'stock_quantity' => 1000,
-//             'maximum_lead_time' => 7,
-//             'minimum_lead_time' => 14,
-//             'payment_terms' => 30,
-//             'status' => UnderReview::class,
-//             'tenant_id' => $tenant->id
-//         ])
-//         ->assertJsonPath('data.documents.product_image.0.file_name', 'image_two.jpg');
-// });
+    $this->actingAs($user)->patch("/api/tasks/$task->id/complete")
+        ->assertOk()
+        ->assertJsonFragment([
+            'description' => 'Do my Laundry',
+            'due_date' => '2024-12-09',
+            'status' => 'complete',
+            'user_id' => $user->id
+        ]);
+});
 
-// it('throws a 400 when updating the status of a supplier product to the same status', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
+it('throws a 400 when attempting to mark an already completed task as complete', function () {
+    $user = User::factory()->create();
 
-//     $product = Product::factory()->createOneQuietly([
-//         'status' => Unpublished::class,
-//         'tenant_id' => $tenant->id
-//     ]);
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::COMPLETE,
+        'user_id' => $user->id
+    ]);
 
-//     $this->actingAs($user)->patch("/api/v1/products/$product->id/status", [
-//         'status' => 'unpublished'
-//     ])
-//         ->assertStatus(400)
-//         ->assertJsonFragment([
-//             'msg' => 'Product is already unpublished'
-//         ]);
-// });
+    $this->actingAs($user)->patch("/api/tasks/$task->id/complete")
+        ->assertStatus(400)
+        ->assertJsonFragment([
+            'message' => 'Task is already completed'
+        ]);
+});
 
-// it('throws a 422 when trying to update the status of a supplier product to published', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
+it('deletes a task belonging to a user', function () {
+    $user = User::factory()->create();
 
-//     $product = Product::factory()->createOneQuietly([
-//         'tenant_id' => $tenant->id
-//     ]);
+    $task = Task::factory()->create([
+        'description' => 'Do my Laundry',
+        'due_date' => Carbon::parse('2024-12-09'),
+        'status' => TaskStatus::COMPLETE,
+        'user_id' => $user->id
+    ]);
 
-//     $this->actingAs($user)->patch("/api/v1/products/$product->id/status", [
-//         'status' => 'published'
-//     ])
-//         ->assertStatus(422);
-// });
+    $this->actingAs($user)->delete("/api/tasks/$task->id")
+        ->assertOK()
+        ->assertJsonFragment([
+            'message' => 'Task deleted successfully'
+        ]);
 
-// it('deletes a supplier product', function () {
-//     $tenant = Tenant::factory()->create();
-//     $user = User::factory()->create([
-//         'tenant_id' => $tenant->id
-//     ]);
-
-//     $product = Product::factory()->createOneQuietly([
-//         'tenant_id' => $tenant->id
-//     ]);
-
-//     $this->actingAs($user)->delete("/api/v1/products/$product->id")
-//         ->assertOk()
-//         ->assertJsonFragment([
-//             'msg' => 'Product deleted successfully',
-//         ]);
-// });
+    expect(Task::count())->toBe(0);
+});
