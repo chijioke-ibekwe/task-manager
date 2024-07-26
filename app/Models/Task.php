@@ -33,6 +33,7 @@ class Task extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'status' => TaskStatus::class
+        'status' => TaskStatus::class,
+        'due_date' => 'date'
     ];
 }
