@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Services\TaskService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Ramsey\Collection\Exception\UnsupportedOperationException;
 
 class TaskController extends Controller
 {
@@ -91,6 +92,8 @@ class TaskController extends Controller
             return $this->response('Task completed successfully', $response);
         } catch (ModelNotFoundException $e) {
             return $this->response('Task not found', code: 404);
+        } catch (UnsupportedOperationException $e) {
+            return $this->response($e->getMessage(), code: 400);
         }
     }
 

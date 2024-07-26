@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Services\TaskService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Ramsey\Collection\Exception\UnsupportedOperationException;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -62,6 +63,10 @@ class TaskServiceImpl implements TaskService
     public function markTaskAsComplete(string $taskId): Task
     {
         $task = $this->fetchMyTask($taskId);
+
+        if($task->status == TaskStatus::COMPLETE) {
+            throw new UnsupportedOperationException('Task is already completed');
+        }
 
         $task->update([
             'status' => TaskStatus::COMPLETE
