@@ -19,7 +19,7 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'description' => fake()->words(),
+            'description' => 'Do my laundry',
             'due_date' => fake()->date(),
             'status' => TaskStatus::INCOMPLETE,
             'user_id' => User::factory()
