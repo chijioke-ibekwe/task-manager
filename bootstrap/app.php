@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'status' => ResponseStatus::FAILURE,
                 'message' => $errors[0],
                 'data' => $errors
-            ], 400);
+            ], 422);
         });
 
 
