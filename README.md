@@ -22,7 +22,7 @@ To run this project:
    docker compose up -d
    ```
    This command will spin-up the following containers running in a detached mode:
-    = The task manager laravel application running on `localhost:8000`
+    - The task manager laravel application running on `localhost:8000`
     - A postgres RDBMS running on `localhost:5433`, and
     - A pgAdmin UI running on `localhost:5051` for managing the database.
 
@@ -31,7 +31,7 @@ To run this project:
    docker logs --follow task_manager
    ```
 
-3. After the containers are fully initialized, you should see the test `` when you visit `localhost:8000` on your browser.
+3. After the containers are fully initialized, you should see the text `Task manager server is up and running` when you visit     `localhost:8000` on your browser.
 
 4. The Postman Collection link for the project can be found on https://documenter.getpostman.com/view/12633695/2sA3kYizut
    It contains detailed documentation on how to use the endpoints.
