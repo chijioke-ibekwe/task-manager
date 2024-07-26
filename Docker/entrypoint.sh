@@ -4,7 +4,7 @@ composer install --no-progress --no-interaction
 
 cp .env.example .env
 
-php artisan migrate:fresh
+php artisan migrate
 php artisan key:generate
 php artisan jwt:secret
 
