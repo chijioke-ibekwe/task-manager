@@ -32,6 +32,7 @@ class TaskController extends Controller
     /**
      * Fetch a single task belonging to me.
      *
+     * @param string $taskId 
      * @return JsonResponse
      */
     public function show(string $taskId): JsonResponse
@@ -48,6 +49,7 @@ class TaskController extends Controller
     /**
      * Create a task.
      *
+     * @param CreateTaskRequest $request 
      * @return JsonResponse
      */
     public function store(CreateTaskRequest $request): JsonResponse
@@ -60,6 +62,8 @@ class TaskController extends Controller
     /**
      * Update a task belonging to me.
      *
+     * @param UpdateTaskRequest $request 
+     * @param string $taskId
      * @return JsonResponse
      */
     public function update(UpdateTaskRequest $request, string $taskId): JsonResponse
@@ -76,6 +80,7 @@ class TaskController extends Controller
     /**
      * Mark a task belonging to me as complete.
      *
+     * @param string $taskId
      * @return JsonResponse
      */
     public function complete(string $taskId): JsonResponse
@@ -92,6 +97,7 @@ class TaskController extends Controller
     /**
      * Delete a task belonging to me.
      *
+     * @param string $taskId 
      * @return JsonResponse
      */
     public function destroy(string $taskId): JsonResponse

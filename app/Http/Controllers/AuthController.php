@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegistrationRequest;
 use App\Services\AuthService;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -16,7 +17,13 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function login(LoginRequest $request)
+    /**
+     * Authenticate a user
+     *
+     * @param string $taskId 
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
     {
         try {
             $response = $this->authService->login($request);
