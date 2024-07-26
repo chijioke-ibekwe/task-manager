@@ -34,6 +34,6 @@ class Task extends Model
      */
     protected $casts = [
         'status' => TaskStatus::class,
-        'due_date' => 'date'
+        'due_date' => 'date:Y-m-d'
     ];
 }
