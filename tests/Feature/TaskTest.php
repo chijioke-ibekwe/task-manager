@@ -183,5 +183,5 @@ it('deletes a task belonging to a user', function () {
             'message' => 'Task deleted successfully'
         ]);
 
-    expect(Task::count())->toBe(0);
+    expect(Task::all())->toHaveCount(0);
 });
